@@ -8,6 +8,8 @@ const db = require("./db");
 const secret =
     process.env.SESSION_SECRET ||
     require("../server/secrets.json").SESSION_SECRET;
+const cryptoRandomString = require("crypto-random-string");
+const ses = require("./ses");
 
 app.use(compression());
 app.use(express.json());
@@ -22,12 +24,19 @@ app.use(
     })
 );
 
+app.get("/user/id.json", function (req, res) {
+    res.json({
+        userId: req.session.userId,
+    });
+});
+
 app.post("/register.json", (req, res) => {
     const { first, last, email, password } = req.body;
     hash(password)
         .then((hashedPassword) => {
             db.createUsers(first, last, email, hashedPassword)
                 .then((userId) => {
+                    // console.log("userId inside register", userId);
                     req.session.userId = userId.rows[0].id;
                     res.json({
                         success: true,
@@ -48,21 +57,18 @@ app.post("/register.json", (req, res) => {
         });
 });
 
-app.post("/login", (req, res) => {
+app.post("/login.json", (req, res) => {
     db.getUserPasswordFromEmail(req.body.email)
         .then(({ rows }) => {
+            console.log("rows:", rows);
             compare(req.body.password, rows[0].password)
                 .then((match) => {
                     console.log("match:", match);
                     if (match) {
                         req.session.userId = rows[0].id;
-                        if (rows[0].signature == null) {
-                            res.redirect("/petition");
-                        } else {
-                            res.redirect("/user/id.json");
-                        }
+                        res.json({ success: true });
                     } else {
-                        res.redirect("/login");
+                        res.json({ success: false });
                     }
                 })
                 .catch(() => {
@@ -78,15 +84,32 @@ app.post("/login", (req, res) => {
         });
 });
 
-app.get("/user/id.json", function (req, res) {
-    res.json({
-        userId: req.session.userId,
-    });
+app.post("/reset/start", (req, res) => {
+    db.getUserPasswordFromEmail(req.body.email)
+        .then(({ rows }) => {
+            console.log("ROWS: ", rows);
+            console.log(req.body.email);
+            if (rows[0].length > 0) {
+                const secretCode = cryptoRandomString({
+                    length: 6,
+                });
+                return db
+                    .insertUserCodes(req.body.email, secretCode)
+                    .then(() => {
+                        ses.sendEmail(rows[0].email, secretCode).then(() => {
+                            res.json({ success: true });
+                        });
+                    });
+            }
+        })
+        .catch(() => {
+            res.json({ success: false });
+        });
 });
 
-app.get("/logout", (req, res) => {
+app.get("/logout.json", (req, res) => {
     req.session = null;
-    res.redirect("/register.json");
+    res.redirect("/login.json");
 });
 
 app.get("*", function (req, res) {
