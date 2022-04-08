@@ -15,7 +15,7 @@ const ses = new aws.SES({
 
 /// in server.js you're going to want to call this function in your
 /// server in a POST route (whenever the user wants to reset the password)
-exports.sendEmail = function (recipient, message, subject) {
+exports.sendEmail = function (recipient, message) {
     return ses
         .sendEmail({
             Source: "Nathan Galante <galante.nathan@gmail.com>",
@@ -29,11 +29,9 @@ exports.sendEmail = function (recipient, message, subject) {
                     },
                 },
                 Subject: {
-                    Data: subject,
+                    Data: "data!",
                 },
             },
         })
         .promise();
 };
-
-

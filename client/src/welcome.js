@@ -8,9 +8,9 @@ export default function Welcome() {
     return (
         <div id="welcome">
             <h1>Put a bird on it</h1>
-            <div className="chicken">
+            {/* <div className="chicken">
                 <img src="/chicken.png" className="chickenImage" />
-            </div>
+            </div> */}
             <BrowserRouter>
                 <div>
                     <Route exact path="/register">

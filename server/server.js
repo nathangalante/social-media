@@ -87,9 +87,7 @@ app.post("/login.json", (req, res) => {
 app.post("/reset/start", (req, res) => {
     db.getUserPasswordFromEmail(req.body.email)
         .then(({ rows }) => {
-            console.log("ROWS: ", rows);
-            console.log(req.body.email);
-            if (rows[0].length > 0) {
+            if (rows.length > 0) {
                 const secretCode = cryptoRandomString({
                     length: 6,
                 });
@@ -105,6 +103,31 @@ app.post("/reset/start", (req, res) => {
         .catch(() => {
             res.json({ success: false });
         });
+});
+
+app.post("/reset/verify", (req, res) => {
+    console.log("hello!", req.body);
+    db.findLatestCodes(req.body.email).then(({ rows }) => {
+        console.log("Code Rows:", rows);
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].code == req.body.code) {
+                console.log("correct code");
+                hash(req.body.password)
+                    .then((hashedPassword) => {
+                        db.updateUserPassword(
+                            req.body.email,
+                            hashedPassword
+                        ).then(() => {
+                            res.json({ success: true });
+                        });
+                    })
+                    .catch((err) => {
+                        console.log("error verify code secret", err);
+                        res.json({ success: false });
+                    });
+            }
+        }
+    });
 });
 
 app.get("/logout.json", (req, res) => {

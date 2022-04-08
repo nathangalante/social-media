@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 export default class Reset extends Component {
     constructor() {
         super();
-        this.state = {};
+        this.state = {
+            step: 1,
+        };
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSubmitStart = this.handleSubmitStart.bind(this);
+        this.handleSubmitVerify = this.handleSubmitVerify.bind(this);
     }
     componentDidMount() {
         console.log("Registration just mounted");
@@ -22,7 +25,7 @@ export default class Reset extends Component {
             [evt.target.name]: evt.target.value,
         });
     }
-    handleSubmit(e) {
+    handleSubmitStart(e) {
         console.log(
             "user wants to send over data to the server & register",
             this.state
@@ -39,11 +42,9 @@ export default class Reset extends Component {
             .then((resp) => {
                 console.log("server response from POST /register.json", resp);
                 if (resp.success === true) {
-                    location.reload();
+                    this.setState({ step: 2 });
                 } else {
-                    this.setState({
-                        error: "Didn't receive your code? Please type your e-mail again",
-                    });
+                    this.setState({ step: 1 });
                 }
             })
             .catch((err) => {
@@ -53,12 +54,38 @@ export default class Reset extends Component {
                 });
             });
     }
-    render() {
-        return (
-            <section>
-                <h1 className="someClass">Reset Your Password</h1>
-                {this.state.error && <h2>{this.state.error}</h2>}
-                <form>
+    handleSubmitVerify(e) {
+        console.log("submit was clicked", this.state);
+
+        e.preventDefault();
+        fetch("/reset/verify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(this.state),
+        })
+            .then((resp) => resp.json())
+            .then((resp) => {
+                console.log(resp);
+                if (resp.success == true) {
+                    this.setState({ step: 3 });
+                    console.log("Success!", resp.success);
+                } else {
+                    this.setState({ step: 2 });
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                this.setState({ error: true });
+            });
+    }
+
+    getCurrentDisplay() {
+        if (this.state.step === 1) {
+            return (
+                <section>
+                    {this.state.error && <h2>{this.state.error}</h2>}
                     <input
                         name="email"
                         placeholder="E-mail"
@@ -68,12 +95,55 @@ export default class Reset extends Component {
                     <button
                         className="button-83"
                         role="button"
-                        onClick={this.handleSubmit}
+                        onClick={this.handleSubmitStart}
                     >
                         Send e-mail to reset password
                     </button>
-                    <Link to="/register">Click here to Register!</Link>
-                </form>
+                </section>
+            );
+        } else if (this.state.step === 2) {
+            return (
+                <section>
+                    <h1>Change Your Password</h1>
+                    {this.state.error && <h2>{this.state.error}</h2>}
+                    <input
+                        name="code"
+                        placeholder="Code"
+                        key="code"
+                        onChange={this.handleChange}
+                    />
+                    <input
+                        name="password"
+                        placeholder="New Password"
+                        type="password"
+                        key="password"
+                        onChange={this.handleChange}
+                    />
+                    <button
+                        className="button-83"
+                        role="button"
+                        onClick={this.handleSubmitVerify}
+                    >
+                        Submit
+                    </button>
+                </section>
+            );
+        } else if (this.state.step === 3) {
+            return (
+                <section>
+                    {this.state.error && <h2>{this.state.error}</h2>}
+                    <h2>Success!</h2>
+                    <Link to="/login">Click here to Log in!</Link>
+                </section>
+            );
+        }
+    }
+    render() {
+        return (
+            <section>
+                <h1>Reset Your Password</h1>
+                {this.state.error && <h2>{this.state.error}</h2>}
+                <div>{this.getCurrentDisplay()}</div>
             </section>
         );
     }
@@ -83,14 +153,3 @@ export default class Reset extends Component {
 // login query the same
 
 // next display says email was sent
-
-/// this.state = {
-//     1
-//     }
-/// getCurrentDisplay() {
-//     if (step === 1) {
-//         <div>this is display 1</div>
-//     } else if (step === 2) {
-
-//     }
-// }
