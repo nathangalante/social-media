@@ -12,12 +12,10 @@ export default class Login extends Component {
         console.log("Registration just mounted");
     }
     handleChange(evt) {
-        console.log("user is typing in the input field :)");
-        console.log("which input field is my user tpying in?", evt.target.name);
-        console.log("what is my user typing?", evt.target.value);
-        console.log("This is THIS: ", this.state);
-        // every time a change on any of the input fields happens we want to sync that
-        // change to our state
+        // console.log("user is typing in the input field :)");
+        // console.log("which input field is my user tpying in?", evt.target.name);
+        // console.log("what is my user typing?", evt.target.value);
+        // console.log("This is THIS: ", this.state);
         this.setState({
             [evt.target.name]: evt.target.value,
         });
@@ -36,7 +34,8 @@ export default class Login extends Component {
             .then((resp) => {
                 console.log("server response from POST /register.json", resp);
                 if (resp.success === true) {
-                    location.reload();
+                    resp.redirect("/profilePic");
+                    // location.reload();
                 } else {
                     this.setState({
                         error: "E-mail and/or Password are incorrect",
@@ -52,8 +51,8 @@ export default class Login extends Component {
     }
     render() {
         return (
-            <section>
-                <h1 className="someClass">Log-in</h1>
+            <section className="inputs">
+                <h2>Log-in</h2>
                 {this.state.error && <h2>{this.state.error}</h2>}
                 <form>
                     <input
@@ -75,8 +74,13 @@ export default class Login extends Component {
                     >
                         Log-in
                     </button>
-                    <Link to="/register">Click here to Register!</Link>
-                    <Link to="/reset">Forgot your password?</Link>
+                    <Link to="/register" className="link">
+                        Click here to Register
+                    </Link>
+                    <br />
+                    <Link to="/reset" className="link">
+                        Forgot your password?
+                    </Link>
                 </form>
             </section>
         );

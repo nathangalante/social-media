@@ -50,14 +50,15 @@ export default class Registration extends Component {
                 this.setState({
                     error: "Something went wrong! Please try again",
                 });
-                
+
                 // make sure to set our error state in the component's state
             });
     }
     render() {
         return (
-            <section>
-                <h1 className="someClass">Register</h1>
+            <section className="inputs">
+                <h2 className="someClass">Register</h2>
+                <br />
                 {this.state.error && <h2>{this.state.error}</h2>}
                 <form>
                     <input
@@ -91,11 +92,11 @@ export default class Registration extends Component {
                     >
                         Register
                     </button>
-                    <Link to="/login">Click here to Log in!</Link>
+                    <Link to="/login" className="link">
+                        Click here to Log-in
+                    </Link>
                 </form>
             </section>
         );
     }
 }
-
-

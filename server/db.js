@@ -46,3 +46,22 @@ exports.findLatestCodes = (email) => {
         [email]
     );
 };
+
+exports.updateImageUrl = (userId, url) => {
+    return db.query(
+        `UPDATE users 
+    SET url=$2
+    WHERE id=$1
+    RETURNING url`,
+        [userId, url]
+    );
+};
+
+exports.getUserByUserId = (userId) => {
+    console.log("getUserById", { userId });
+    return db.query(
+        `SELECT * FROM users 
+        WHERE id=$1`,
+        [userId]
+    );
+};

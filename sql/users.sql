@@ -3,10 +3,12 @@ DROP TABLE IF EXISTS reset_codes CASCADE;
 
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
-    first VARCHAR(255) NOT NULL CHECK (firstname != ''),
-    last VARCHAR(255) NOT NULL CHECK (lastname != ''),
+    first VARCHAR(255) NOT NULL CHECK (first != ''),
+    last VARCHAR(255) NOT NULL CHECK (last != ''),
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    url VARCHAR,
+    bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

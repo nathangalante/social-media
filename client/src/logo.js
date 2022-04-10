@@ -1,7 +1,7 @@
 export default function Logo() {
     return (
         <>
-            <img src="/chicken.png" alt="logo" />
+            {/* <img src="/chicken.png" alt="logo" /> */}
         </>
     );
 }

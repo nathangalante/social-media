@@ -19,8 +19,6 @@ export default class Reset extends Component {
         console.log("which input field is my user tpying in?", evt.target.name);
         console.log("what is my user typing?", evt.target.value);
         console.log("This is THIS: ", this.state);
-        // every time a change on any of the input fields happens we want to sync that
-        // change to our state
         this.setState({
             [evt.target.name]: evt.target.value,
         });
@@ -56,7 +54,6 @@ export default class Reset extends Component {
     }
     handleSubmitVerify(e) {
         console.log("submit was clicked", this.state);
-
         e.preventDefault();
         fetch("/reset/verify", {
             method: "POST",
@@ -80,7 +77,6 @@ export default class Reset extends Component {
                 this.setState({ error: true });
             });
     }
-
     getCurrentDisplay() {
         if (this.state.step === 1) {
             return (
@@ -119,13 +115,15 @@ export default class Reset extends Component {
                         key="password"
                         onChange={this.handleChange}
                     />
-                    <button
-                        className="button-83"
-                        role="button"
-                        onClick={this.handleSubmitVerify}
-                    >
-                        Submit
-                    </button>
+                    <div className="button">
+                        <button
+                            className="button-83"
+                            role="button"
+                            onClick={this.handleSubmitVerify}
+                        >
+                            Submit
+                        </button>
+                    </div>
                 </section>
             );
         } else if (this.state.step === 3) {
@@ -133,15 +131,17 @@ export default class Reset extends Component {
                 <section>
                     {this.state.error && <h2>{this.state.error}</h2>}
                     <h2>Success!</h2>
-                    <Link to="/login">Click here to Log in!</Link>
+                    <Link to="/login" className="link">
+                        Click here to Log in!
+                    </Link>
                 </section>
             );
         }
     }
     render() {
         return (
-            <section>
-                <h1>Reset Your Password</h1>
+            <section className="inputs">
+                <h2>Reset Your Password</h2>
                 {this.state.error && <h2>{this.state.error}</h2>}
                 <div>{this.getCurrentDisplay()}</div>
             </section>

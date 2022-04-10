@@ -10,6 +10,8 @@ const secret =
     require("../server/secrets.json").SESSION_SECRET;
 const cryptoRandomString = require("crypto-random-string");
 const ses = require("./ses");
+const s3 = require("./s3");
+const { uploader } = require("./upload");
 
 app.use(compression());
 app.use(express.json());
@@ -23,6 +25,17 @@ app.use(
         sameSite: true,
     })
 );
+
+app.get("/", (req, res) => {
+    db.getUserByUserId(req.session.userId)
+        .then(({ rows }) => {
+            console.log("Rows on 0: ", rows[0]);
+            res.json({ success: true, user: rows[0] });
+        })
+        .catch((err) => {
+            console.log("ERROR WHILE FETCHING USER DATA: ", err);
+        });
+});
 
 app.get("/user/id.json", function (req, res) {
     res.json({
@@ -106,9 +119,7 @@ app.post("/reset/start", (req, res) => {
 });
 
 app.post("/reset/verify", (req, res) => {
-    console.log("hello!", req.body);
     db.findLatestCodes(req.body.email).then(({ rows }) => {
-        console.log("Code Rows:", rows);
         for (let i = 0; i < rows.length; i++) {
             if (rows[i].code == req.body.code) {
                 console.log("correct code");
@@ -130,9 +141,27 @@ app.post("/reset/verify", (req, res) => {
     });
 });
 
-app.get("/logout.json", (req, res) => {
+app.post("/upload.json", uploader.single("file"), s3.upload, (req, res) => {
+    console.log("req.body: ", req.body);
+    console.log("req.file: ", req.file.filename);
+    const fullUrl = `https://s3.amazonaws.com/spicedendoftermprojects/${req.file.filename}`;
+
+    if (req.file) {
+        db.updateImageUrl(req.session.userId, fullUrl)
+            .then(({ rows }) => {
+                console.log("ROWS: ", rows);
+                res.json({ success: true, url: rows[0].url });
+            })
+            .catch((err) => {
+                console.log("error uploading image", err);
+                res.json({ success: false });
+            });
+    }
+});
+
+app.get("/logout", (req, res) => {
     req.session = null;
-    res.redirect("/login.json");
+    res.redirect("/login");
 });
 
 app.get("*", function (req, res) {
