@@ -1,18 +1,18 @@
 import { Component } from "react";
 
-export default class Uploader extends Component {
+export default class Upload extends Component {
     constructor(props) {
         super(props);
         this.state = {
             file: "",
         };
-
         this.handleClick = this.handleClick.bind(this);
     }
-
-    handleClick() {
+    componentDidMount() {
+    }
+    handleClick(e) {
+        e.preventDefault();
         const file = this.state.file;
-        // console.log("******", this.state.file);
         let fd = new FormData();
         fd.append("file", file);
         fetch("/upload", {
@@ -20,14 +20,13 @@ export default class Uploader extends Component {
             body: fd,
         })
             .then((res) => res.json())
-            .then(({ rows }) => {
-                console.log("response", rows);
+            .then((response) => {
+                console.log("response", response);
             })
             .catch((err) => {
                 console.log("err", err);
             });
     }
-
     render() {
         return (
             <>
@@ -42,7 +41,7 @@ export default class Uploader extends Component {
                                     this.setState({ file: e.target.files[0] });
                                 }}
                             ></input>
-                            <button onClick={this.handleClick}> Submit</button>
+                            <button onClick={this.handleClick}>Submit</button>
                         </form>
                     </section>
                 </section>

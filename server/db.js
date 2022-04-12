@@ -4,12 +4,12 @@ const db = spicedPg(
         `postgres:postgres:postgres@localhost:5432/users`
 );
 
-exports.createUsers = (first, last, email, password) => {
+exports.createUsers = (first, last, email, password, url, bio) => {
     return db.query(
-        `INSERT INTO users (first, last, email, password)
-    VALUES ($1, $2, $3, $4)
+        `INSERT INTO users (first, last, email, password, url, bio)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING id`,
-        [first, last, email, password]
+        [first, last, email, password, url, bio]
     );
 };
 
@@ -24,7 +24,7 @@ exports.getUserPasswordFromEmail = (email) => {
 exports.updateUserPassword = (password, email) => {
     return db.query(
         `UPDATE users SET password=$1
-        WHERE email=$2`,
+        WHERE users.email=$2`,
         [password, email]
     );
 };
@@ -58,10 +58,38 @@ exports.updateImageUrl = (userId, url) => {
 };
 
 exports.getUserByUserId = (userId) => {
-    console.log("getUserById", { userId });
     return db.query(
         `SELECT * FROM users 
         WHERE id=$1`,
         [userId]
+    );
+};
+
+exports.updateBio = (userId, bio) => {
+    return db.query(
+        `UPDATE users
+    SET bio=$2
+    WHERE id=$1
+    RETURNING bio`,
+        [userId, bio]
+    );
+};
+
+exports.mostRecentUsers = () => {
+    return db.query(
+        `SELECT * FROM users
+    ORDER BY id
+    LIMIT 6`
+    );
+};
+
+exports.retrieveMatchingUsers = (search) => {
+    return db.query(
+        `
+      SELECT * FROM users
+        WHERE first ILIKE $1
+        OR last ILIKE $1;
+  `,
+        [search + "%"]
     );
 };

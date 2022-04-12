@@ -12,10 +12,6 @@ export default class Login extends Component {
         console.log("Registration just mounted");
     }
     handleChange(evt) {
-        // console.log("user is typing in the input field :)");
-        // console.log("which input field is my user tpying in?", evt.target.name);
-        // console.log("what is my user typing?", evt.target.value);
-        // console.log("This is THIS: ", this.state);
         this.setState({
             [evt.target.name]: evt.target.value,
         });
@@ -23,7 +19,7 @@ export default class Login extends Component {
     handleSubmit(e) {
         console.log("user wants to send over data to the server & register");
         e.preventDefault();
-        fetch("/login.json", {
+        fetch("/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -32,10 +28,8 @@ export default class Login extends Component {
         })
             .then((resp) => resp.json())
             .then((resp) => {
-                console.log("server response from POST /register.json", resp);
                 if (resp.success === true) {
-                    resp.redirect("/profilePic");
-                    // location.reload();
+                    location.reload();
                 } else {
                     this.setState({
                         error: "E-mail and/or Password are incorrect",

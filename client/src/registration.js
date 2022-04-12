@@ -12,12 +12,6 @@ export default class Registration extends Component {
         console.log("Registration just mounted");
     }
     handleChange(evt) {
-        // console.log("user is typing in the input field :)");
-        // console.log("which input field is my user tpying in?", evt.target.name);
-        // console.log("what is my user typing?", evt.target.value);
-        console.log("This is THIS: ", this.state);
-        // every time a change on any of the input fields happens we want to sync that
-        // change to our state
         this.setState({
             [evt.target.name]: evt.target.value,
         });
@@ -25,7 +19,6 @@ export default class Registration extends Component {
     handleSubmit(e) {
         console.log("user wants to send over data to the server & register");
         e.preventDefault();
-        // console.log("data the user provided:", this.state);
         fetch("/register.json", {
             method: "POST",
             headers: {
@@ -50,8 +43,6 @@ export default class Registration extends Component {
                 this.setState({
                     error: "Something went wrong! Please try again",
                 });
-
-                // make sure to set our error state in the component's state
             });
     }
     render() {

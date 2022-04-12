@@ -26,30 +26,18 @@ app.use(
     })
 );
 
-app.get("/", (req, res) => {
-    db.getUserByUserId(req.session.userId)
-        .then(({ rows }) => {
-            console.log("Rows on 0: ", rows[0]);
-            res.json({ success: true, user: rows[0] });
-        })
-        .catch((err) => {
-            console.log("ERROR WHILE FETCHING USER DATA: ", err);
-        });
-});
-
 app.get("/user/id.json", function (req, res) {
     res.json({
         userId: req.session.userId,
     });
 });
 
-app.post("/register.json", (req, res) => {
-    const { first, last, email, password } = req.body;
+app.post("/register", (req, res) => {
+    const { first, last, email, password, url, bio } = req.body;
     hash(password)
         .then((hashedPassword) => {
-            db.createUsers(first, last, email, hashedPassword)
+            db.createUsers(first, last, email, hashedPassword, url, bio)
                 .then((userId) => {
-                    // console.log("userId inside register", userId);
                     req.session.userId = userId.rows[0].id;
                     res.json({
                         success: true,
@@ -70,7 +58,7 @@ app.post("/register.json", (req, res) => {
         });
 });
 
-app.post("/login.json", (req, res) => {
+app.post("/login", (req, res) => {
     db.getUserPasswordFromEmail(req.body.email)
         .then(({ rows }) => {
             console.log("rows:", rows);
@@ -126,9 +114,10 @@ app.post("/reset/verify", (req, res) => {
                 hash(req.body.password)
                     .then((hashedPassword) => {
                         db.updateUserPassword(
-                            req.body.email,
-                            hashedPassword
+                            hashedPassword,
+                            req.body.email
                         ).then(() => {
+                            console.log("new hashed password", hashedPassword);
                             res.json({ success: true });
                         });
                     })
@@ -141,14 +130,24 @@ app.post("/reset/verify", (req, res) => {
     });
 });
 
-app.post("/upload.json", uploader.single("file"), s3.upload, (req, res) => {
-    console.log("req.body: ", req.body);
-    console.log("req.file: ", req.file.filename);
+app.get("/user", (req, res) => {
+    db.getUserByUserId(req.session.userId)
+        .then(({ rows }) => {
+            res.json({ success: true, user: rows[0] });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({ success: false });
+        });
+});
+
+app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
     const fullUrl = `https://s3.amazonaws.com/spicedendoftermprojects/${req.file.filename}`;
 
     if (req.file) {
         db.updateImageUrl(req.session.userId, fullUrl)
             .then(({ rows }) => {
+                console.log("Hello!", fullUrl);
                 console.log("ROWS: ", rows);
                 res.json({ success: true, url: rows[0].url });
             })
@@ -157,6 +156,41 @@ app.post("/upload.json", uploader.single("file"), s3.upload, (req, res) => {
                 res.json({ success: false });
             });
     }
+});
+
+app.post("/editBio", (req, res) => {
+    console.log("body from editBio", req.body);
+    db.updateBio(req.session.userId, req.body.draftBio)
+        .then(({ rows }) => {
+            console.log("this is rows in editBio", { rows });
+            console.log("bio", req.body.bio);
+            res.json({ rows });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+app.get("/users", (req, res) => {
+    db.mostRecentUsers()
+        .then(({ rows }) => {
+            console.log("users rows: ", rows);
+            res.json({ rows });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
+app.get("/users/:search", (req, res) => {
+    db.retrieveMatchingUsers(req.params.search)
+        .then(({ rows }) => {
+            console.log("users rows: ", rows);
+            res.json({ rows });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 });
 
 app.get("/logout", (req, res) => {
@@ -171,3 +205,6 @@ app.get("*", function (req, res) {
 app.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
+
+// ODER BY for 3 users to appear whenever the client hasn't
+// typed anything into the input LIMIT 3

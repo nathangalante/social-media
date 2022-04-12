@@ -15,10 +15,6 @@ export default class Reset extends Component {
         console.log("Registration just mounted");
     }
     handleChange(evt) {
-        console.log("user is typing in the input field :)");
-        console.log("which input field is my user tpying in?", evt.target.name);
-        console.log("what is my user typing?", evt.target.value);
-        console.log("This is THIS: ", this.state);
         this.setState({
             [evt.target.name]: evt.target.value,
         });
@@ -38,7 +34,6 @@ export default class Reset extends Component {
         })
             .then((resp) => resp.json())
             .then((resp) => {
-                console.log("server response from POST /register.json", resp);
                 if (resp.success === true) {
                     this.setState({ step: 2 });
                 } else {
@@ -64,7 +59,7 @@ export default class Reset extends Component {
         })
             .then((resp) => resp.json())
             .then((resp) => {
-                console.log(resp);
+                console.log("this is the data", resp);
                 if (resp.success == true) {
                     this.setState({ step: 3 });
                     console.log("Success!", resp.success);
