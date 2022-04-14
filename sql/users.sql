@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS reset_codes CASCADE;
+DROP TABLE IF EXISTS reset_codes; 
+DROP TABLE IF EXISTS friend_requests CASCADE;
 
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
@@ -19,3 +20,10 @@ CREATE TABLE reset_codes(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE friend_requests (
+    id SERIAL PRIMARY KEY, 
+    sender_id INT NOT NULL REFERENCES,
+    recipient_id INT NOT NULL REFERENCES,
+    accepted BOOLEAN DEFAULT false, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

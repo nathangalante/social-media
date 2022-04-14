@@ -13,7 +13,6 @@ export default function Profile(props) {
                 last={props.last}
                 sizing={"mainProfilePic"}
             />
-
             <BioEditor bio={props.bio} setBio={props.setBio} />
         </div>
     );

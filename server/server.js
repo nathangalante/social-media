@@ -159,11 +159,8 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
 });
 
 app.post("/editBio", (req, res) => {
-    console.log("body from editBio", req.body);
     db.updateBio(req.session.userId, req.body.draftBio)
         .then(({ rows }) => {
-            console.log("this is rows in editBio", { rows });
-            console.log("bio", req.body.bio);
             res.json({ rows });
         })
         .catch((err) => {
@@ -171,7 +168,7 @@ app.post("/editBio", (req, res) => {
         });
 });
 
-app.get("/users", (req, res) => {
+app.get("/find-users.json", (req, res) => {
     db.mostRecentUsers()
         .then(({ rows }) => {
             console.log("users rows: ", rows);
@@ -182,7 +179,7 @@ app.get("/users", (req, res) => {
         });
 });
 
-app.get("/users/:search", (req, res) => {
+app.get("/find-users/:search", (req, res) => {
     db.retrieveMatchingUsers(req.params.search)
         .then(({ rows }) => {
             console.log("users rows: ", rows);
@@ -190,6 +187,40 @@ app.get("/users/:search", (req, res) => {
         })
         .catch((err) => {
             console.log(err);
+        });
+});
+
+app.get("/find/user/:id", (req, res) => {
+    db.getOtherUsersData(req.params.id)
+        .then(({ rows }) => {
+            console.log("user's data: ", rows);
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("Error retrieving user data: ", err);
+        });
+});
+
+app.get("/friendship/:otherUserid", (req, res) => {
+    console.log("Params on friendship", req.params);
+    console.log("cookies on friendship", req.session);
+    db.friendshipStatus(req.params.otherUserId, req.session.userId)
+        .then(({ rows }) => {
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("Error making new friends: ", err);
+        });
+});
+
+app.post("/friendship-status", (req, res) => {
+    const { sender_id, recipient_id, accepted, created_at } = req.body;
+    db.insertIntoFriendRequests(sender_id, recipient_id, accepted, created_at)
+        .then(({ rows }) => {
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error uploading friend request", err);
         });
 });
 

@@ -93,3 +93,52 @@ exports.retrieveMatchingUsers = (search) => {
         [search + "%"]
     );
 };
+
+exports.getOtherUsersData = (id) => {
+    return db.query(
+        `SELECT first, last, url, bio, id
+    FROM users WHERE id=$1`,
+        [id]
+    );
+};
+
+exports.friendshipStatus = (recipient, sender) => {
+    return db.query(
+        `SELECT * FROM friend_requests
+    WHERE (recipient_id = $1 AND sender_id = $2)
+    OR (recipient_id = $2 AND sender_id = $1) `,
+        [recipient, sender]
+    );
+};
+
+exports.insertIntoFriendRequests = (sender_id, recipient_id, accepted) => {
+    return db.query(
+        `INSERT INTO friend_requests (sender_id, recipient_id, accepted)
+            VALUES ($1, $2, $3)
+            RETURNING *`,
+        [sender_id, recipient_id, accepted]
+    );
+};
+
+exports.updateFriendRequest = (
+    sender_id,
+    recipient_id,
+    accepted,
+    created_at
+) => {
+    return db.query(
+        `INSERT INTO friend_requests (sender_id, recipient_id, accepted, created_at)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (sender_id)
+    DO UPDATE SET sender_id = $1, recipient_id = $2, accepted = $3, created_at = $4`,
+        [sender_id, recipient_id, accepted, created_at]
+    );
+};
+
+exports.unfriendQuery = () => {
+    return db.query(
+        `DELETE FROM friend_requests
+WHERE id=$1;`,
+        []
+    );
+};

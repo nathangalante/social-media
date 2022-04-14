@@ -11,6 +11,7 @@ h1 {
 .title {
     position: relative;
     top: 1vh;
+    left: -15%;
 }
 
 .chicken {
@@ -124,6 +125,7 @@ input:focus {
     flex-direction: row-reverse;
     align-items: center;
     justify-content: space-between;
+    column-gap: 10px 10px;
 }
 
 .hamburger {
@@ -135,11 +137,11 @@ input:focus {
 }
 
 .mainProfilePic {
-    border: black 2px solid;
+    border: black 7px solid;
     position: relative;
     top: 5vh;
     width: 30%;
-    height: 57vh;
+    height: 400px;
     border-radius: 50%;
     padding: 4px;
     object-fit: cover;
@@ -156,7 +158,7 @@ input:focus {
 
 .imageName {
     position: relative;
-    top: 70vh;
+    top: 55vh;
 }
 
 .linkButton {
@@ -172,4 +174,48 @@ input:focus {
 .textArea {
     position: relative;
     top: 17vh;
+}
+
+.users {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    text-align: center;
+}
+
+.userPhoto {
+    position: relative;
+    top: 5vh;
+    font-size: 35px;
+}
+
+.searchQuery {
+    position: relative;
+    left: 1vh;
+    top: 2vh;
+}
+
+.findProfilePic {
+    /* border: black 7px solid; */
+    position: relative;
+    top: 5vh;
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    padding: 4px;
+    object-fit: cover;
+}
+
+.searchLink {
+    position: relative;
+    top: 1vh;
+    left: 65%;
+}
+
+.otherProfileBio {
+    text-align: center;
+    position: relative;
+    top: 25vh;
+    height: 30%;
+    width: 50%;
 }
