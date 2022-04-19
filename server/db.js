@@ -111,12 +111,12 @@ exports.friendshipStatus = (recipient, sender) => {
     );
 };
 
-exports.insertIntoFriendRequests = (sender_id, recipient_id, accepted) => {
+exports.insertIntoFriendRequests = (sender_id, recipient_id) => {
     return db.query(
-        `INSERT INTO friend_requests (sender_id, recipient_id, accepted)
-            VALUES ($1, $2, $3)
+        `INSERT INTO friend_requests (sender_id, recipient_id)
+            VALUES ($1, $2)
             RETURNING *`,
-        [sender_id, recipient_id, accepted]
+        [sender_id, recipient_id]
     );
 };
 
@@ -135,10 +135,10 @@ exports.updateFriendRequest = (
     );
 };
 
-exports.unfriendQuery = () => {
+exports.unfriendQuery = (id) => {
     return db.query(
         `DELETE FROM friend_requests
 WHERE id=$1;`,
-        []
+        [id]
     );
 };

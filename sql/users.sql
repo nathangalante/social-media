@@ -27,3 +27,5 @@ CREATE TABLE friend_requests (
     accepted BOOLEAN DEFAULT false, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO friend_requests 

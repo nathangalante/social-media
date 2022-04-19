@@ -201,11 +201,18 @@ app.get("/find/user/:id", (req, res) => {
         });
 });
 
-app.get("/friendship/:otherUserid", (req, res) => {
-    console.log("Params on friendship", req.params);
+app.get("/friendship/:otherUserId", (req, res) => {
+    console.log(
+        "Params on friendship",
+        req.params,
+        typeof req.params.otherUserId
+    );
     console.log("cookies on friendship", req.session);
-    db.friendshipStatus(req.params.otherUserId, req.session.userId)
+    const otherUserId = parseInt(req.params.otherUserId);
+    console.log({ otherUserId });
+    db.friendshipStatus(otherUserId, req.session.userId)
         .then(({ rows }) => {
+            console.log({ rows });
             res.json(rows);
         })
         .catch((err) => {
@@ -214,14 +221,22 @@ app.get("/friendship/:otherUserid", (req, res) => {
 });
 
 app.post("/friendship-status", (req, res) => {
-    const { sender_id, recipient_id, accepted, created_at } = req.body;
-    db.insertIntoFriendRequests(sender_id, recipient_id, accepted, created_at)
+    const { sender_id, recipient_id } = req.body;
+    console.log({ sender_id, recipient_id });
+    db.insertIntoFriendRequests(sender_id, recipient_id)
         .then(({ rows }) => {
+            console.log("rows on friendship insert: ", { rows });
             res.json(rows);
         })
         .catch((err) => {
             console.log("error uploading friend request", err);
         });
+});
+
+app.delete("/friendship-status", (req, res) => {
+    db.unfriendQuery().then((data) => {
+        console.log("this is data on deleting friendship: ", data);
+    });
 });
 
 app.get("/logout", (req, res) => {

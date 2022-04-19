@@ -3,7 +3,7 @@ import { useParams, useHistory } from "react-router-dom";
 import ProfilePic from "./profilePic";
 import FriendButton from "./friendButton";
 
-export default function OtherProfile() {
+export default function OtherProfile(props) {
     const params = useParams();
     const history = useHistory();
     const [user, setUser] = useState({});
@@ -47,7 +47,10 @@ export default function OtherProfile() {
                         sizing={"mainProfilePic"}
                     />
                     <p className="otherProfileBio">{user.bio}</p>
-                    <FriendButton />
+                    <FriendButton
+                        otherUserId={params.id}
+                        loggedInUserId={props.loggedInUserId}
+                    />
                 </div>
             )}
         </>

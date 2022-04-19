@@ -22,6 +22,7 @@ export default class App extends Component {
         fetch("/user")
             .then((resp) => resp.json())
             .then((data) => {
+                console.log({ nathan: data.user });
                 this.setState({ user: data.user });
             })
             .catch((err) => {
@@ -104,8 +105,7 @@ export default class App extends Component {
                         <OtherProfile />
                     </Route> */}
                     <Route exact path={"/user/:id"}>
-                        <OtherProfile
-                        />
+                        <OtherProfile loggedInUserId={this.state.user.id}/>
                     </Route>
                 </BrowserRouter>
             </>
