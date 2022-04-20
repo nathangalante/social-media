@@ -32,7 +32,7 @@ app.get("/user/id.json", function (req, res) {
     });
 });
 
-app.post("/register", (req, res) => {
+app.post("/register.json", (req, res) => {
     const { first, last, email, password, url, bio } = req.body;
     hash(password)
         .then((hashedPassword) => {
@@ -209,10 +209,10 @@ app.get("/friendship/:otherUserId", (req, res) => {
     );
     console.log("cookies on friendship", req.session);
     const otherUserId = parseInt(req.params.otherUserId);
-    console.log({ otherUserId });
-    db.friendshipStatus(otherUserId, req.session.userId)
+    console.log(otherUserId);
+    db.friendshipStatus(req.session.userId, otherUserId)
         .then(({ rows }) => {
-            console.log({ rows });
+            console.log("friendship status: ", rows);
             res.json(rows);
         })
         .catch((err) => {
@@ -220,9 +220,9 @@ app.get("/friendship/:otherUserId", (req, res) => {
         });
 });
 
-app.post("/friendship-status", (req, res) => {
+app.post("/friendship-status/sendFriendRequest", (req, res) => {
     const { sender_id, recipient_id } = req.body;
-    console.log({ sender_id, recipient_id });
+    console.log("BODY friendrequest", req.body);
     db.insertIntoFriendRequests(sender_id, recipient_id)
         .then(({ rows }) => {
             console.log("rows on friendship insert: ", { rows });
@@ -233,10 +233,31 @@ app.post("/friendship-status", (req, res) => {
         });
 });
 
-app.delete("/friendship-status", (req, res) => {
-    db.unfriendQuery().then((data) => {
-        console.log("this is data on deleting friendship: ", data);
-    });
+app.post("/friendship-status/cancelFriendship", (req, res) => {
+    console.log("Delete BODY", req.body);
+    const { id } = req.body;
+    db.unfriendQuery(id)
+        .then((data) => {
+            console.log("rows on cancel friendship: ", data);
+            res.json(data);
+        })
+        .catch((err) => {
+            console.log("error canceling friendship", err);
+        });
+});
+
+app.post("/friendship-status/acceptFriendRequest", (req, res) => {
+    const { sender_id, recipient_id } = req.body;
+    console.log("sender", sender_id);
+    console.log("recipient", recipient_id);
+    db.acceptFriendRequest(sender_id, recipient_id)
+        .then(({ rows }) => {
+            console.log("rows on accepting friendship: ", rows);
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error rejecting friend request", err);
+        });
 });
 
 app.get("/logout", (req, res) => {

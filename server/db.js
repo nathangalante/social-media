@@ -120,25 +120,19 @@ exports.insertIntoFriendRequests = (sender_id, recipient_id) => {
     );
 };
 
-exports.updateFriendRequest = (
-    sender_id,
-    recipient_id,
-    accepted,
-    created_at
-) => {
+exports.acceptFriendRequest = (sender_id, recipient_id) => {
     return db.query(
-        `INSERT INTO friend_requests (sender_id, recipient_id, accepted, created_at)
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT (sender_id)
-    DO UPDATE SET sender_id = $1, recipient_id = $2, accepted = $3, created_at = $4`,
-        [sender_id, recipient_id, accepted, created_at]
+        `UPDATE friend_requests 
+        SET accepted = true
+        WHERE sender_id = $1 AND recipient_id = $2`,
+        [sender_id, recipient_id]
     );
 };
 
 exports.unfriendQuery = (id) => {
     return db.query(
         `DELETE FROM friend_requests
-WHERE id=$1;`,
+WHERE sender_id=$1 `,
         [id]
     );
 };
