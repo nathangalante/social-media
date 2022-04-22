@@ -12,6 +12,11 @@ const cryptoRandomString = require("crypto-random-string");
 const ses = require("./ses");
 const s3 = require("./s3");
 const { uploader } = require("./upload");
+const server = require("http").Server(app);
+const io = require("socket.io")(server, {
+    allowRequest: (req, callback) =>
+        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+});
 
 app.use(compression());
 app.use(express.json());
@@ -25,6 +30,10 @@ app.use(
         sameSite: true,
     })
 );
+
+io.use(function (socket, next) {
+    cookieSession(socket.request, socket.request.res, next);
+});
 
 app.get("/user/id.json", function (req, res) {
     res.json({
@@ -260,6 +269,52 @@ app.post("/friendship-status/acceptFriendRequest", (req, res) => {
         });
 });
 
+app.get("/friends-wannabees", (req, res) => {
+    db.retrieveFriendsAndWannabees(req.session.userId)
+        .then(({ rows }) => {
+            console.log("friend and wannabees rows: ", rows);
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error while retrieving friends and wannabees", err);
+        });
+});
+
+app.post("/accept-wannabee", (req, res) => {
+    db.acceptFriendRequest(req.body.id, req.session.userId)
+        .then(({ rows }) => {
+            console.log("rows on accepting friendship: ", rows);
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error rejecting friend request", err);
+        });
+});
+
+app.get("/api/chat", (req, res) => {
+    db.retrieveChatMessages(req.session.userId)
+        .then(({ rows }) => {
+            console.log("data on messages received by the server", rows);
+            res.json(rows);
+        })
+        .catch((err) => {
+            console.log("error getting chat messages", err);
+        });
+});
+
+// app.post("/unfriend", (req, res) => {
+//     console.log("Delete BODY", req.body);
+//     const { id } = req.body;
+//     db.unfriendQuery(id)
+//         .then((data) => {
+//             console.log("rows on cancel friendship: ", data);
+//             res.json(data);
+//         })
+//         .catch((err) => {
+//             console.log("error canceling friendship", err);
+//         });
+// });
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/login");
@@ -269,8 +324,37 @@ app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-app.listen(process.env.PORT || 3001, function () {
+server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
+});
+
+io.on("connection", function (socket) {
+    console.log("NEW CONNECTION");
+    const userId = socket.request.session.userId;
+    console.log("userID: ", userId);
+    if (userId) {
+        // 1. send last 10 messages
+        socket.on("disconnect", () => {
+            console.log("user disconnected");
+        });
+
+        socket.emit("last-10-messages", {
+            data: ["hey", "morning!"],
+        });
+
+        socket.on("message", (data) => {
+            console.log("data:/t", data);
+
+            // store the message to the database
+
+            // make sure you retrieve the connected user data
+
+            // broadcast the new message to everyone
+
+            io.emit("message-broadtcast", { message: data.message });
+        });
+    }
+    // 2. broadcast new incoming messages
 });
 
 // ODER BY for 3 users to appear whenever the client hasn't

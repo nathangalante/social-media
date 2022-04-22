@@ -1,11 +1,10 @@
-// // our root reducer
-// import { combineReducers } from "redux";
-// // import friendReducer here! 
+import { combineReducers } from "redux";
+import friendsReducer from "./friends/slice";
+// import messagesReducer from "./messages/slice";
 
+const rootReducer = combineReducers({
+    friendsWannabees: friendsReducer,
+    // messages: messagesReducer,
+});
 
-// const rootReducer = combineReducers({
-//     friends: friendsReducer, 
-// });
-
-// export default rootReducer;
-
+export default rootReducer;

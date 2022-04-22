@@ -6,6 +6,8 @@ import Profile from "./profile";
 import FindPeople from "./findPeople";
 import { Link } from "react-router-dom";
 import OtherProfile from "./otherProfile";
+import FriendsWannabees from "./friendsWannabees";
+import Chat from "./chat";
 
 export default class App extends Component {
     constructor(props) {
@@ -17,18 +19,18 @@ export default class App extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setBio = this.setBio.bind(this);
     }
-    componentDidMount() {
-        console.log("component did mount", this.state);
-        fetch("/user")
-            .then((resp) => resp.json())
-            .then((data) => {
-                console.log({ nathan: data.user });
-                this.setState({ user: data.user });
-            })
-            .catch((err) => {
-                console.log("Error", err);
-            });
-    }
+    // componentDidMount() {
+    //     console.log("component did mount", this.state);
+    //     fetch("/user")
+    //         .then((resp) => resp.json())
+    //         .then((data) => {
+    //             console.log({ nathan: data.user });
+    //             this.setState({ user: data.user });
+    //         })
+    //         .catch((err) => {
+    //             console.log("Error", err);
+    //         });
+    // }
 
     handleSubmit(evt) {
         console.log("handleSubmit: ", evt);
@@ -66,6 +68,12 @@ export default class App extends Component {
                             <Link to="/find-users" className="searchLink">
                                 Find People
                             </Link>
+                            <Link to="/friends" className="friendsList">
+                                Friends
+                            </Link>
+                            <Link to="/chat" className="chat">
+                                Chat
+                            </Link>
                             <img
                                 src="/hamburger3.svg"
                                 alt="hamburger"
@@ -101,12 +109,28 @@ export default class App extends Component {
                     <Route exact path="/find-users">
                         <FindPeople />
                     </Route>
+                    <Route exact path="/friends">
+                        <FriendsWannabees
+                            url={this.state.user.url}
+                            first={this.state.user.first}
+                            last={this.state.user.last}
+                            sizing={"mainProfilePic"}
+                        />
+                    </Route>
                     {/* <Route exact path={"/"}>
                         <OtherProfile />
                     </Route> */}
                     <Route exact path={"/user/:id"}>
-                        <OtherProfile loggedInUserId={this.state.user.id}/>
+                        <OtherProfile loggedInUserId={this.state.user.id} />
                     </Route>
+                    {/* <Route exact path="/chat">
+                        <Chat
+                            url={this.state.user.url}
+                            first={this.state.user.first}
+                            last={this.state.user.last}
+                            sizing={"mainProfilePic"}
+                        />
+                    </Route> */}
                 </BrowserRouter>
             </>
         );

@@ -1,23 +1,55 @@
-// // this is our friends and wannabbees mini-reducer
+// this is our friends-wannabees sub-reducer
+// in here- we MUST make copies for every array and object
+// no mutating allowed!
 
-// export default function friends(friends = [], action) {
-//     // whatever you do here must make copies of every object /array
-//     // no direct mutating allowed
+// import { createStore, applyMiddleware } from "redux";
+// import thunk from "redux-thunk";
+// import rootReducer from "./reducers/index";
 
-//     return friends;
-// }
+// const store = createStore(rootReducer, applyMiddleware(thunk));
 
-// var obj = {
-//     name: "layla",
-// };
+export default function friendsWannabeesReducer(friends = null, action) {
+    if (action.type === "friends-wannabees/accept") {
+        return friends.map((friend) => {
+            if (friend.id == action.payload.id) {
+                return { ...friend, accepted: true };
+            }
+            return friend;
+        });
+    }
+    if (action.type === "friends-wannabees/receive") {
+        console.log("action", action);
+        return [...action.payload.data];
+    }
+    if (action.type === "friends-wannabees/unfriend") {
+        return friends.filter((friend) => {
+            if (friend.id != action.payload.data) {
+                return friend;
+            }
+        });
+    }
 
-// // #` the spread operator (works for objs and arrays )
+    return friends;
+}
 
-// var newObj = { ...obj };
-// var coolObj = { ...obj, breed: "bichon" };
+// Actions go below
 
-// var arr = [1, 2, 3];
-// var newArr = [...arr];
-// var coolArr = [...arr, 4, 5];
-
-
+export function makeFriend(id) {
+    return {
+        type: "friends-wannabees/accept",
+        payload: { id },
+    };
+}
+export function receiveFriendsAndWannabees(data) {
+    console.log("data on receive friendsandwannabees: ", data);
+    return {
+        type: "friends-wannabees/receive",
+        payload: { data },
+    };
+}
+export function makeUnfriend(data) {
+    return {
+        type: "friends-wannabees/unfriend",
+        payload: { data },
+    };
+}

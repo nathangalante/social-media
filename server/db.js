@@ -123,8 +123,9 @@ exports.insertIntoFriendRequests = (sender_id, recipient_id) => {
 exports.acceptFriendRequest = (sender_id, recipient_id) => {
     return db.query(
         `UPDATE friend_requests 
-        SET accepted = true
-        WHERE sender_id = $1 AND recipient_id = $2`,
+        SET accepted = 'true'
+        WHERE sender_id = $1 AND recipient_id = $2
+        RETURNING *`,
         [sender_id, recipient_id]
     );
 };
@@ -132,7 +133,32 @@ exports.acceptFriendRequest = (sender_id, recipient_id) => {
 exports.unfriendQuery = (id) => {
     return db.query(
         `DELETE FROM friend_requests
-WHERE sender_id=$1 `,
+        WHERE sender_id=$1 `,
         [id]
+    );
+};
+
+exports.retrieveFriendsAndWannabees = (id) => {
+    return db.query(
+        `SELECT users.id, first, last, url, accepted
+    FROM friend_requests
+    JOIN users
+    ON (accepted = false AND recipient_id = $1 AND sender_id = users.id)
+    OR (accepted = true AND recipient_id = $1 AND sender_id = users.id)
+    OR (accepted = true AND sender_id = $1 AND recipient_id = users.id)
+        `,
+        [id]
+    );
+};
+
+exports.retrieveChatMessages = (userId) => {
+    return db.query(
+        `SELECT users.first, users.last, users.url, chat.sender_id, chat.message, chat.created_at 
+        FROM users
+        RIGHT JOIN chat
+        ON users.id = chat.sender_id
+        WHERE chat.sender_id = $1
+        `,
+        [userId]
     );
 };

@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS reset_codes; 
-DROP TABLE IF EXISTS friend_requests CASCADE;
+DROP TABLE IF EXISTS friend_requests;
+DROP TABLE IF EXISTS chat CASCADE;
 
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
@@ -28,4 +29,10 @@ CREATE TABLE friend_requests (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO friend_requests 
+CREATE TABLE chat (
+    id SERIAL PRIMARY KEY,
+    sender_id INT REFERENCES users(id) NOT NULL,
+    message VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
