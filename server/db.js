@@ -151,14 +151,49 @@ exports.retrieveFriendsAndWannabees = (id) => {
     );
 };
 
-exports.retrieveChatMessages = (userId) => {
+exports.retrieveChatMessages = () => {
     return db.query(
-        `SELECT users.first, users.last, users.url, chat.sender_id, chat.message, chat.created_at 
-        FROM users
-        RIGHT JOIN chat
+        `SELECT users.first AS first, users.last AS last, users.url AS url, chat.id AS id, chat.message AS message, chat.created_at AS created_at 
+        FROM chat
+        JOIN users
         ON users.id = chat.sender_id
-        WHERE chat.sender_id = $1
+        ORDER BY id DESC 
+        LIMIT 10
+        `
+    );
+};
+
+// SELECT chats.id AS message_id, chats.user_id AS user_id, first, last, profile_pic, message
+//             FROM chats
+//             JOIN users
+//             ON chats.user_id = users.id
+//             ORDER BY chats.id DESC
+//             LIMIT 10
+
+// exports.insertMessage = (message, user_id) => {
+//     return db.query(
+//         `WITH “user”
+//         AS ( SELECT * FROM users WHERE id = $2),
+//         message AS (INSERT INTO chats (message, user_id, from_id) VALUES ($1, $2, $2) RETURNING message, user_id)
+//         SELECT first, last, profile_pic, message, user_id FROM “user”, message`,
+//         [message, user_id]
+//     );
+// };
+
+exports.insertMessage = (message, id) => {
+    return db.query(
+        `INSERT INTO chat (message, sender_id) VALUES ($1, $2)
+        RETURNING id, message, created_at
         `,
-        [userId]
+        [message, id]
+    );
+};
+
+exports.getUserInfo = (id) => {
+    return db.query(
+        `SELECT first, last, url
+        FROM users
+        WHERE id=$1`,
+        [id]
     );
 };

@@ -19,18 +19,18 @@ export default class App extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setBio = this.setBio.bind(this);
     }
-    // componentDidMount() {
-    //     console.log("component did mount", this.state);
-    //     fetch("/user")
-    //         .then((resp) => resp.json())
-    //         .then((data) => {
-    //             console.log({ nathan: data.user });
-    //             this.setState({ user: data.user });
-    //         })
-    //         .catch((err) => {
-    //             console.log("Error", err);
-    //         });
-    // }
+    componentDidMount() {
+        console.log("component did mount", this.state);
+        fetch("/user")
+            .then((resp) => resp.json())
+            .then((data) => {
+                console.log({ nathan: data.user });
+                this.setState({ user: data.user });
+            })
+            .catch((err) => {
+                console.log("Error", err);
+            });
+    }
 
     handleSubmit(evt) {
         console.log("handleSubmit: ", evt);
@@ -43,7 +43,10 @@ export default class App extends Component {
             user: { ...this.state.user, bio: newBio },
         });
     }
+
     render() {
+        console.log("state in app", this.state);
+
         if (!this.state.user.id) {
             return <img src="loading.gif" alt="loading..." />;
         }
@@ -123,14 +126,14 @@ export default class App extends Component {
                     <Route exact path={"/user/:id"}>
                         <OtherProfile loggedInUserId={this.state.user.id} />
                     </Route>
-                    {/* <Route exact path="/chat">
+                    <Route exact path="/chat">
                         <Chat
                             url={this.state.user.url}
                             first={this.state.user.first}
                             last={this.state.user.last}
                             sizing={"mainProfilePic"}
                         />
-                    </Route> */}
+                    </Route>
                 </BrowserRouter>
             </>
         );

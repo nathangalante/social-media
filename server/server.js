@@ -23,17 +23,32 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-app.use(
-    cookieSession({
-        secret: secret,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-        sameSite: true,
-    })
-);
+const cookieSessionMiddleware = cookieSession({
+    secret: secret,
+    maxAge: 1000 * 60 * 60 * 24 * 14,
+    sameSite: true,
+});
+
+app.use(cookieSessionMiddleware);
+app.use(cookieSessionMiddleware);
 
 io.use(function (socket, next) {
-    cookieSession(socket.request, socket.request.res, next);
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
 });
+// app.use(
+//     cookieSession({
+//         secret: secret,
+//         maxAge: 1000 * 60 * 60 * 24 * 14,
+//         sameSite: true,
+//     })
+// );
+
+// app.use(cookieSession);
+// app.use(cookieSession);
+
+// io.use(function (socket, next) {
+//     cookieSession(socket.request, socket.request.res, next);
+// });
 
 app.get("/user/id.json", function (req, res) {
     res.json({
@@ -332,26 +347,28 @@ io.on("connection", function (socket) {
     console.log("NEW CONNECTION");
     const userId = socket.request.session.userId;
     console.log("userID: ", userId);
-    if (userId) {
-        // 1. send last 10 messages
-        socket.on("disconnect", () => {
-            console.log("user disconnected");
-        });
 
-        socket.emit("last-10-messages", {
-            data: ["hey", "morning!"],
+    if (userId) {
+        db.retrieveChatMessages().then(({ rows }) => {
+            console.log("rows of retrieved messages", rows);
+            socket.emit("last-10-messages", {
+                data: rows,
+            });
         });
 
         socket.on("message", (data) => {
-            console.log("data:/t", data);
-
-            // store the message to the database
-
-            // make sure you retrieve the connected user data
-
-            // broadcast the new message to everyone
-
-            io.emit("message-broadtcast", { message: data.message });
+            console.log("data: ", data);
+            db.insertMessage(data.message, userId).then(({ rows }) => {
+                db.retrieveChatMessages(userId).then(({ rows: data }) => {
+                    console.log("data on getUserInfo", data);
+                    io.emit("message-broadcast", { ...rows[0], ...data[0] });
+                });
+                console.log("data on insert message", rows);
+            });
+        });
+    } else {
+        socket.on("disconnect", () => {
+            console.log("user disconnected");
         });
     }
     // 2. broadcast new incoming messages

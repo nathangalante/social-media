@@ -11,6 +11,8 @@ export default function FriendsWannabees() {
     // This gives you access to the dispatch function
     const dispatch = useDispatch();
 
+    // You are selecting Wannabees from the global state
+    // before you target a property in state, make sure you know what it looks like!
     const wannabees = useSelector(
         (state) =>
             state.friendsWannabees &&
@@ -26,6 +28,10 @@ export default function FriendsWannabees() {
     console.log("wannabees: ", wannabees);
     console.log("friends: ", friends);
 
+    // Make sure you select your "friends" from state using useSelector
+    // .....
+
+    // When component mounts, get all friends and wannabees
     useEffect(() => {
         fetch("/friends-wannabees")
             .then((res) => res.json())
@@ -36,6 +42,9 @@ export default function FriendsWannabees() {
             .catch((err) => {
                 console.log("error fetching friends", err);
             });
+        // STEP 1 - make a GET request using fetch to retrieve the friends and wannabees
+        // STEP 2 - once you have that data back, call dispatch and pass it an action to add this data to redux
+        // you'll need to create and import the action creator below
     }, []);
 
     const handleAccept = (id) => {
@@ -51,6 +60,10 @@ export default function FriendsWannabees() {
                 console.log(data);
                 dispatch(makeFriend(id));
             });
+        // STEP 1 - make a POST request to update the DB
+        // STEP 2 - dispatch an action to update the global state
+
+        // you'll need to create and import the action creator below
     };
     const handleUnfriend = (id) => {
         fetch("/friendship-status/cancelFriendship", {
@@ -65,6 +78,10 @@ export default function FriendsWannabees() {
                 console.log(data);
                 dispatch(makeUnfriend(id));
             });
+        // STEP 1 - make a POST request to update the DB
+        // STEP 2 - dispatch an action to update the global state
+
+        // you'll need to create and import the action creator below
     };
 
     return (
