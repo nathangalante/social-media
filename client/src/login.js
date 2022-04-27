@@ -29,7 +29,7 @@ export default class Login extends Component {
             .then((resp) => resp.json())
             .then((resp) => {
                 if (resp.success === true) {
-                    location.reload();
+                    location.replace("/");
                 } else {
                     this.setState({
                         error: "E-mail and/or Password are incorrect",

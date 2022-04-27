@@ -12,6 +12,7 @@ export default class BioEditor extends Component {
         this.toggleTextArea = this.toggleTextArea.bind(this);
     }
     handleBioChange(evt) {
+        console.log("event target value:", evt.target.value);
         this.setState({ draftBio: evt.target.value });
     }
     toggleTextArea() {
@@ -20,6 +21,10 @@ export default class BioEditor extends Component {
         });
     }
     submitBio(e) {
+        console.log("this is weird and a very big label:", this.state);
+        if (!this.state.draftBio) {
+            return this.toggleTextArea();
+        }
         e.preventDefault();
         fetch("/editBio", {
             method: "POST",
@@ -31,36 +36,55 @@ export default class BioEditor extends Component {
             .then((resp) => resp.json())
             .then(() => {
                 // console.log(data);
-                this.setState({
-                    showTextArea: false,
-                });
                 this.props.setBio(this.state.draftBio);
+                this.toggleTextArea();
             });
     }
     render() {
         return (
-            <div className="bioEditor">
-                {!this.state.showTextArea && (
-                    <div>
-                        <p className="bio">{this.props.bio}</p>
-                        <button
-                            onClick={this.toggleTextArea}
-                            className="linkButton"
-                        >
-                            Edit Bio
-                        </button>
-                    </div>
+            <>
+                {!this.state.showTextArea && !this.props.bio && (
+                    <>
+                        <div className="editText">
+                            <button
+                                className="button-83"
+                                onClick={this.toggleTextArea}
+                            >
+                                Add a bio
+                            </button>
+                        </div>
+                    </>
+                )}
+                {!this.state.showTextArea && this.props.bio && (
+                    <>
+                        <div className="editTextBio">
+                            <p className="bio">{this.props.bio}</p>
+                            <button
+                                onClick={this.toggleTextArea}
+                                className="button-83"
+                            >
+                                Edit Bio
+                            </button>
+                        </div>
+                    </>
                 )}
                 {this.state.showTextArea && (
-                    <div>
-                        <textarea
-                            onKeyDown={this.handleBioChange}
-                            className="textArea"
-                        />
-                        <button onClick={this.submitBio} className="linkButton">
+                    // <>
+                    <div className="editText">
+                        <form>
+                            <mat-form-field appearance="fill">
+                                <input
+                                    placeholder="Type your bird story here"
+                                    onKeyDown={this.handleBioChange}
+                                    defaultValue={this.props.bio}
+                                ></input>
+                            </mat-form-field>
+                        </form>
+                        <button onClick={this.submitBio} className="button-83">
                             Save
                         </button>
                     </div>
+                    // </>
                 )}
 
                 {/* if this text area is hidden, 
@@ -70,7 +94,7 @@ export default class BioEditor extends Component {
                 
                 if there is NO bio, allow them to ADD a bio whenever 
                 they click on the button show the text area*/}
-            </div>
+            </>
         );
     }
 }

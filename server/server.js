@@ -30,25 +30,10 @@ const cookieSessionMiddleware = cookieSession({
 });
 
 app.use(cookieSessionMiddleware);
-app.use(cookieSessionMiddleware);
 
 io.use(function (socket, next) {
     cookieSessionMiddleware(socket.request, socket.request.res, next);
 });
-// app.use(
-//     cookieSession({
-//         secret: secret,
-//         maxAge: 1000 * 60 * 60 * 24 * 14,
-//         sameSite: true,
-//     })
-// );
-
-// app.use(cookieSession);
-// app.use(cookieSession);
-
-// io.use(function (socket, next) {
-//     cookieSession(socket.request, socket.request.res, next);
-// });
 
 app.get("/user/id.json", function (req, res) {
     res.json({

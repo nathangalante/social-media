@@ -85,46 +85,60 @@ export default function FriendsWannabees() {
     };
 
     return (
-        <section>
-            <h1>Friends</h1>
-            {friends?.map((friend) => {
-                return (
-                    <div key={friend.id}>
-                        <img
-                            src={friend.url || "/logo.jpeg"}
-                            height={150}
-                            width={150}
-                        ></img>
-                        <h3>
-                            {friend.first} {friend.last}
-                        </h3>
-
-                        <button onClick={() => handleUnfriend(friend.id)}>
-                            Unfriend
-                        </button>
-                    </div>
-                );
-            })}
-            {/* Display your friends */}
-
-            <h1>Wannabees</h1>
-            {wannabees?.map((wannabee) => {
-                return (
-                    <div key={wannabee.id}>
-                        <img
-                            src={wannabee.url || "/logo.jpeg"}
-                            height={150}
-                            width={150}
-                        ></img>
-                        <h3>
-                            {wannabee.first} {wannabee.last}
-                        </h3>
-                        <button onClick={() => handleAccept(wannabee.id)}>
-                            Accept
-                        </button>
-                    </div>
-                );
-            })}
-        </section>
+        <>
+            <section className="wannabees">
+                {!friends?.length && !wannabees?.length && (
+                    <h1>You have currently no new Birds or Bird Requests</h1>
+                )}
+                {friends?.length && <h1>Birds</h1>}
+                {friends?.map((friend) => {
+                    return (
+                        <div key={friend.id}>
+                            <img
+                                src={friend.url || "/logo.jpeg"}
+                                height={150}
+                                width={150}
+                                className="friendImage"
+                            ></img>
+                            <h3>
+                                {friend.first} {friend.last}
+                            </h3>
+                            <div className="accept">
+                                <button
+                                    onClick={() => handleUnfriend(friend.id)}
+                                    className="button-83"
+                                >
+                                    Unfriend
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
+                {/* Display your friends */}
+                {wannabees?.length && <h1>Pending Bird Requests</h1>}
+                {wannabees?.map((wannabee) => {
+                    return (
+                        <div key={wannabee.id}>
+                            <img
+                                src={wannabee.url || "/logo.jpeg"}
+                                height={150}
+                                width={150}
+                            ></img>
+                            <h3>
+                                {wannabee.first} {wannabee.last}
+                            </h3>
+                            <div className="accept">
+                                <button
+                                    className="button-83"
+                                    onClick={() => handleAccept(wannabee.id)}
+                                >
+                                    Accept
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })}
+            </section>
+        </>
     );
 }

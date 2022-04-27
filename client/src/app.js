@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import OtherProfile from "./otherProfile";
 import FriendsWannabees from "./friendsWannabees";
 import Chat from "./chat";
+// import Logout from "./logout";
 
 export default class App extends Component {
     constructor(props) {
@@ -15,10 +16,12 @@ export default class App extends Component {
         this.state = {
             user: {},
             uploaderIsVisible: false,
+            userLoggedIn: false,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setBio = this.setBio.bind(this);
     }
+
     componentDidMount() {
         console.log("component did mount", this.state);
         fetch("/user")
@@ -38,6 +41,7 @@ export default class App extends Component {
             showUploader: true,
         });
     }
+
     setBio(newBio) {
         this.setState({
             user: { ...this.state.user, bio: newBio },
@@ -45,8 +49,6 @@ export default class App extends Component {
     }
 
     render() {
-        console.log("state in app", this.state);
-
         if (!this.state.user.id) {
             return <img src="loading.gif" alt="loading..." />;
         }
@@ -68,15 +70,6 @@ export default class App extends Component {
                                 }
                             />
                             <h1 className="title">Put a bird on it</h1>
-                            <Link to="/find-users" className="searchLink">
-                                Find People
-                            </Link>
-                            <Link to="/friends" className="friendsList">
-                                Friends
-                            </Link>
-                            <Link to="/chat" className="chat">
-                                Chat
-                            </Link>
                             <img
                                 src="/hamburger3.svg"
                                 alt="hamburger"
@@ -84,6 +77,15 @@ export default class App extends Component {
                             />
                         </div>
                     </div>
+                    <section className="side-nav">
+                        <Link to="/">Profile</Link>
+                        <Link to="/friends">Friends</Link>
+                        <Link to="/chat">Chat</Link>
+                        <Link to="/find-users">Find People</Link>
+                        <a href="/logout">Logout</a>
+                    </section>
+
+                    {/* {this.state.userLoggedIn &&  */}
                     <Route exact path="/">
                         <Profile
                             url={this.state.user.url}
@@ -134,6 +136,9 @@ export default class App extends Component {
                             sizing={"mainProfilePic"}
                         />
                     </Route>
+                    {/* <Route exact path="/logout">
+                        <Logout />
+                    </Route> */}
                 </BrowserRouter>
             </>
         );

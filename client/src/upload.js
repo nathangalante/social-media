@@ -8,8 +8,7 @@ export default class Upload extends Component {
         };
         this.handleClick = this.handleClick.bind(this);
     }
-    componentDidMount() {
-    }
+    componentDidMount() {}
     handleClick(e) {
         e.preventDefault();
         const file = this.state.file;
@@ -41,7 +40,12 @@ export default class Upload extends Component {
                                     this.setState({ file: e.target.files[0] });
                                 }}
                             ></input>
-                            <button onClick={this.handleClick}>Submit</button>
+                            <button
+                                onClick={this.handleClick}
+                                className="button-83"
+                            >
+                                Submit
+                            </button>
                         </form>
                     </section>
                 </section>

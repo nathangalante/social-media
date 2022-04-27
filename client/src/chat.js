@@ -16,8 +16,14 @@ export default function Chat() {
         console.log("these are the messages sent", setMessages);
     };
 
+    // this.setState((state) => {
+    //     return { text: state };
+    // });
+
     const handleChange = (e) => {
+        e.preventDefault();
         setMessages(e.target.value);
+        // this.setState({ text: "" });
     };
 
     useEffect(() => {
@@ -25,40 +31,58 @@ export default function Chat() {
     }, [messages]);
 
     return (
-        <section>
+        <section className="titleBird">
             <h1>Bird Chat</h1>
-            <div>
+            <div className="outerBox">
                 {messages &&
                     messages.length > 0 &&
                     messages.map((message) => {
                         return (
-                            <div key={message.id}>
-                                <img
-                                    src={message.url || "/chicken.png"}
-                                    height={50}
-                                    width={50}
-                                ></img>
-                                <p>
-                                    {message.first} {message.last} said{}
-                                </p>
-                                <p>{message.message}</p>
-                                <p>
-                                    On {}
-                                    <Moment
-                                        format="DD.MM.YYYY HH:MM,"
-                                        date={message.created_at}
-                                    />
-                                </p>
-                            </div>
+                            <>
+                                <div className="messageBox">
+                                    <div key={message.id}>
+                                        <img
+                                            src={message.url || "/chicken.png"}
+                                            height={50}
+                                            width={50}
+                                            className="chatImage"
+                                        ></img>
+                                        <p className="nameOf">
+                                            {message.first} {message.last} said:
+                                            {}
+                                        </p>
+                                        <p className="message">{message.message}</p>
+                                        <p className="dateAndTime">
+                                            On {}
+                                            <Moment
+                                                format="DD.MM.YYYY HH:MM,"
+                                                date={message.created_at}
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                            </>
                         );
                     })}
             </div>
             <section ref={chatContainer}></section>
-            <textarea
+            <div className="inputField">
+                <mat-form-field appearance="fill">
+                    <input
+                        placeholder="Chime in!"
+                        onChange={handleChange}
+                    ></input>
+                </mat-form-field>
+                <button onClick={sendMessage} className="button-83">
+                    Submit
+                </button>
+            </div>
+            {/* <textarea
                 placeholder={"Chime In!"}
                 onChange={handleChange}
-            ></textarea>
-            <button onClick={sendMessage}>Submit</button>
+            ></textarea> */}
         </section>
     );
 }

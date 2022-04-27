@@ -30,7 +30,7 @@ export default class Registration extends Component {
             .then((resp) => {
                 console.log("server response from POST /register.json", resp);
                 if (resp.success === true) {
-                    location.reload();
+                    location.replace("/");
                 } else {
                     resp.json({ success: false });
                     this.setState({

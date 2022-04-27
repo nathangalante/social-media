@@ -121,6 +121,7 @@ export default function FriendButton(props) {
                 <br />
                 {position === 1 && (
                     <button
+                        className="button-83"
                         onClick={() =>
                             sendFriendRequest(
                                 props.loggedInUserId,
@@ -134,6 +135,7 @@ export default function FriendButton(props) {
                 {position === 2 && (
                     <>
                         <button
+                            className="button-83"
                             onClick={() =>
                                 cancelFriendRequest(sender, receiver)
                             }
@@ -145,6 +147,7 @@ export default function FriendButton(props) {
                 {position === 3 && (
                     <>
                         <button
+                            className="button-83"
                             onClick={() =>
                                 cancelFriendRequest(sender, receiver)
                             }
@@ -156,6 +159,7 @@ export default function FriendButton(props) {
                 {position === 4 && (
                     <>
                         <button
+                            className="button-83"
                             onClick={() =>
                                 acceptFriendRequest(sender, receiver)
                             }
