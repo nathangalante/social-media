@@ -8,6 +8,11 @@ import { Link } from "react-router-dom";
 import OtherProfile from "./otherProfile";
 import FriendsWannabees from "./friendsWannabees";
 import Chat from "./chat";
+// import { useState } from "react";
+// import { ThemeProvider } from "styled-components";
+// import { theme } from "./theme";
+// import { Burger } from "./components/burger/burger";
+// import { Menu } from "./components/menu/menu";
 // import Logout from "./logout";
 
 export default class App extends Component {
@@ -17,7 +22,9 @@ export default class App extends Component {
             user: {},
             uploaderIsVisible: false,
             userLoggedIn: false,
+            // setOpen: false,
         };
+        // const [open, setOpen] = useState(false);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setBio = this.setBio.bind(this);
     }
@@ -52,9 +59,24 @@ export default class App extends Component {
         if (!this.state.user.id) {
             return <img src="loading.gif" alt="loading..." />;
         }
+        // const [open, setOpen] = useState(false);
         return (
             <>
                 <BrowserRouter>
+                    {/* <ThemeProvider theme={theme}>
+                        <>
+                            <div>
+                                <img
+                                    src="https://media.giphy.com/media/xTiTnwj1LUAw0RAfiU/giphy.gif"
+                                    alt="animated burger"
+                                />
+                            </div>
+                            <div>
+                                <Burger open={open} setOpen={setOpen} />
+                                <Menu open={open} setOpen={setOpen} />
+                            </div>
+                        </>
+                    </ThemeProvider> */}
                     <div className="topElement">
                         <div className="insideElements">
                             <ProfilePic
@@ -77,13 +99,16 @@ export default class App extends Component {
                             />
                         </div>
                     </div>
-                    <section className="side-nav">
-                        <Link to="/">Profile</Link>
-                        <Link to="/friends">Friends</Link>
-                        <Link to="/chat">Chat</Link>
-                        <Link to="/find-users">Find People</Link>
-                        <a href="/logout">Logout</a>
-                    </section>
+                    <br />
+                    <div className="center">
+                        <section className="side-nav">
+                            <Link to="/">Profile</Link>
+                            <Link to="/friends">Friends</Link>
+                            <Link to="/chat">Chat</Link>
+                            <Link to="/find-users">Find People</Link>
+                            <a href="/logout">Logout</a>
+                        </section>
+                    </div>
 
                     {/* {this.state.userLoggedIn &&  */}
                     <Route exact path="/">

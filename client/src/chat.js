@@ -33,6 +33,8 @@ export default function Chat() {
     return (
         <section className="titleBird">
             <h1>Bird Chat</h1>
+            <br />
+            <br />
             <div className="outerBox">
                 {messages &&
                     messages.length > 0 &&
@@ -51,7 +53,9 @@ export default function Chat() {
                                             {message.first} {message.last} said:
                                             {}
                                         </p>
-                                        <p className="message">{message.message}</p>
+                                        <p className="message">
+                                            {message.message}
+                                        </p>
                                         <p className="dateAndTime">
                                             On {}
                                             <Moment
@@ -78,6 +82,9 @@ export default function Chat() {
                 <button onClick={sendMessage} className="button-83">
                     Submit
                 </button>
+                <br />
+                <br />
+                <br />
             </div>
             {/* <textarea
                 placeholder={"Chime In!"}

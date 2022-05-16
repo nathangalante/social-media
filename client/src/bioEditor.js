@@ -83,6 +83,7 @@ export default class BioEditor extends Component {
                         <button onClick={this.submitBio} className="button-83">
                             Save
                         </button>
+                        
                     </div>
                     // </>
                 )}
