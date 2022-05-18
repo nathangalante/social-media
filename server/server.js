@@ -328,6 +328,15 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
+if (process.env.NODE_ENV == "production") {
+    app.use((req, res, next) => {
+        if (req.headers["x-forwarded-proto"].startsWith("https")) {
+            return next();
+        }
+        res.redirect(`https://${req.hostname}${req.url}`);
+    });
+}
+
 io.on("connection", function (socket) {
     console.log("NEW CONNECTION");
     const userId = socket.request.session.userId;

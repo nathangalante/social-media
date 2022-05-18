@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { socket } from "./socket.js";
 import { useRef } from "react";
-import Moment from "react-moment";
+// import Moment from "react-moment";
 
 export default function Chat() {
     const chatContainer = useRef();
@@ -58,10 +58,10 @@ export default function Chat() {
                                         </p>
                                         <p className="dateAndTime">
                                             On {}
-                                            <Moment
+                                            {/* <Moment
                                                 format="DD.MM.YYYY HH:MM,"
                                                 date={message.created_at}
-                                            />
+                                            /> */}
                                         </p>
                                     </div>
                                 </div>
